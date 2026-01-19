@@ -1,312 +1,111 @@
-
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>庄氏飞星紫微斗数 - 白话极数命书系统</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <title>Invoice - CFC YOUTH ACADEMY SB</title>
     <style>
-        :root {
-            --mystic-gold: #fbbf24;
-            --ethereal-rose: #fb7185;
-            --deep-indigo: #020617;
-            --glass-border: rgba(255, 255, 255, 0.08);
-        }
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--deep-indigo);
-            color: #f1f5f9;
-            background-image: 
-                radial-gradient(circle at 50% -20%, #1e1b4b 0%, transparent 50%),
-                radial-gradient(circle at 0% 100%, #0f172a 0%, transparent 40%);
-            background-attachment: fixed;
-            margin: 0;
-            overflow-x: hidden;
-        }
-        .chinese-font { font-family: 'Noto Serif SC', serif; }
-        .ziwei-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(4, 1fr);
-            gap: 8px;
-            aspect-ratio: 1 / 1;
-        }
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-        }
-        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; max-width: 800px; margin: 0 auto; padding: 40px; background: #f9f9f9; }
+        .invoice-box { background: #fff; border: 1px solid #eee; padding: 30px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.05); }
+        .header { display: flex; justify-content: space-between; margin-bottom: 40px; }
+        .header h1 { margin: 0; color: #2c3e50; font-size: 36px; text-transform: uppercase; }
+        .header .details { text-align: right; font-size: 14px; color: #777; }
+        .info-section { display: flex; justify-content: space-between; margin-bottom: 40px; border-bottom: 2px solid #f2f2f2; padding-bottom: 20px; }
+        .info-block h3 { font-size: 14px; text-transform: uppercase; color: #999; margin-bottom: 10px; }
+        .info-block p { margin: 0; font-size: 15px; line-height: 1.5; font-weight: bold; color: #333; }
+        .info-block .address { font-weight: normal; font-size: 14px; color: #555; }
         
-        @keyframes pulse-gold {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
-            50% { box-shadow: 0 0 20px 2px rgba(251, 191, 36, 0.2); }
-        }
-        .pulse-gold { animation: pulse-gold 3s infinite ease-in-out; }
-
-        @media print {
-            body { background: white !important; color: black !important; background-image: none !important; }
-            .no-print { display: none !important; }
-            #root { display: none !important; }
-            .print-only { display: block !important; padding: 40px; font-family: 'Noto Serif SC', serif; line-height: 1.8; color: #000 !important; }
-            .print-header { border-bottom: 3px solid #000; margin-bottom: 30px; padding-bottom: 20px; text-align: center; }
-            .print-content { white-space: pre-wrap; text-align: justify; font-size: 12pt; line-height: 2.2; }
-            .print-footer { margin-top: 50px; border-top: 1px solid #ddd; font-size: 10pt; text-align: center; color: #666; }
-        }
-        @media screen { .print-only { display: none; } }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+        table th { background: #2c3e50; color: #fff; font-weight: bold; padding: 12px; text-align: left; font-size: 14px; }
+        table td { padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; vertical-align: top; }
+        table tr:last-child td { border-bottom: none; }
+        .total-row td { border-top: 2px solid #2c3e50; font-weight: bold; font-size: 18px; color: #2c3e50; padding-top: 20px; }
+        
+        .footer { margin-top: 50px; font-size: 13px; color: #777; border-top: 1px solid #eee; padding-top: 20px; }
+        .bank-info { background: #f4f6f7; padding: 15px; border-radius: 5px; margin-top: 20px; }
+        .bank-info h4 { margin: 0 0 10px 0; color: #2c3e50; }
+        
+        /* Helper for alignment */
+        .text-right { text-align: right; }
     </style>
-    <script type="importmap">
-{
-  "imports": {
-    "react": "https://esm.sh/react@19.0.0",
-    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
-    "@google/genai": "https://esm.sh/@google/genai@1.3.0",
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
-  }
-}
-</script>
 </head>
 <body>
-    <div id="root"></div>
-    <div id="print-mount" class="print-only"></div>
 
-    <script type="module">
-        import React, { useState, useMemo, useEffect } from 'react';
-        import { createRoot } from 'react-dom/client';
-        import { GoogleGenAI } from '@google/genai';
-
-        // --- Constants & Engine Logic ---
-        const GANS = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"];
-        const ZHIS = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"];
-        const PALACE_NAMES = ["命宫", "兄弟", "夫妻", "子女", "财帛", "疾厄", "迁移", "交友", "官禄", "田宅", "福德", "父母"];
-        const SI_HUA_MAP = {
-            "甲": { "禄": "廉贞", "权": "破军", "科": "武曲", "忌": "太阳" },
-            "乙": { "禄": "天机", "权": "天梁", "科": "紫微", "忌": "太阴" },
-            "丙": { "禄": "天同", "权": "天机", "科": "文昌", "忌": "廉贞" },
-            "丁": { "禄": "太阴", "权": "天同", "科": "天机", "忌": "巨门" },
-            "戊": { "禄": "贪狼", "权": "太阴", "科": "右弼", "忌": "天机" },
-            "己": { "禄": "武曲", "权": "贪狼", "科": "天梁", "忌": "文曲" },
-            "庚": { "禄": "太阳", "权": "武曲", "科": "太阴", "忌": "天同" },
-            "辛": { "禄": "巨门", "权": "太阳", "科": "文曲", "忌": "文昌" },
-            "壬": { "禄": "天梁", "权": "紫微", "科": "左辅", "忌": "武曲" },
-            "癸": { "禄": "破军", "权": "巨门", "科": "太阴", "忌": "贪狼" },
-        };
-        const GRID_MAP = {
-            11: { r: 0, c: 0 }, 0: { r: 0, c: 1 }, 1: { r: 0, c: 2 }, 2: { r: 0, c: 3 },
-            10: { r: 1, c: 0 },                                        3: { r: 1, c: 3 },
-            9:  { r: 2, c: 0 },                                        4: { r: 2, c: 3 },
-            8:  { r: 3, c: 0 }, 7: { r: 3, c: 1 }, 6: { r: 3, c: 2 }, 5: { r: 3, c: 3 }
-        };
-
-        const getLunarDate = (y, m, d) => {
-            const months = ["正月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "冬月", "腊月"];
-            const days = ["初一", "初二", "初三", "初四", "初五", "初六", "初七", "初八", "初九", "初十", "十一", "十二", "十三", "十四", "十五", "十六", "十七", "十八", "十九", "二十", "廿一", "廿二", "廿三", "廿四", "廿五", "廿六", "廿七", "廿八", "廿九", "三十"];
-            const yearGanIdx = (y - 4) % 10;
-            const yearZhiIdx = (y - 4) % 12;
-            const sbYear = GANS[yearGanIdx] + ZHIS[yearZhiIdx] + "年";
-            return { year: y, month: m, day: d, fullLunarStr: `${sbYear}${months[m-1]}${days[d-1]}` };
-        };
-
-        const calculateChart = (name, y, m, d, hourIdx) => {
-            const yearGanIdx = (y - 4) % 10;
-            let mingPos = (m - 1) - hourIdx + 2;
-            mingPos = (mingPos % 12 + 12) % 12;
-            const palaces = [];
-            for (let i = 0; i < 12; i++) {
-                const dist = (mingPos - i + 12) % 12;
-                const pName = PALACE_NAMES[dist];
-                const tigerGanIdx = (yearGanIdx * 2 + 2) % 10;
-                const pGanIdx = (tigerGanIdx + (i - 2 + 12) % 12) % 10;
-                palaces.push({
-                    zhi_idx: i, zhi: ZHIS[i], gan: GANS[pGanIdx], name: pName,
-                    stars: i === 8 ? ["廉贞"] : i === 2 ? ["破军"] : i === 0 ? ["武曲"] : []
-                });
-            }
-            return { name, palaces };
-        };
-
-        // --- Components ---
-        const PalaceCard = ({ palace, isSelected, isTargeted, huaType, onClick }) => (
-            <div onClick={onClick} className={`relative h-full w-full p-2.5 rounded-xl border transition-all cursor-pointer overflow-hidden group ${isSelected ? 'bg-indigo-500/10 border-indigo-400 ring-1 ring-indigo-400/50' : 'bg-slate-900/40 border-slate-800/80 hover:border-slate-600'}`}>
-                <div className="absolute -right-2 -bottom-2 text-2xl font-black opacity-[0.05]">{palace.zhi}</div>
-                <div className="flex justify-between items-start">
-                    <div className="flex flex-col text-[9px] font-black text-slate-500">
-                        <span>{palace.gan}</span><span>{palace.zhi}</span>
-                    </div>
-                    {isTargeted && <div className="bg-emerald-500 text-slate-950 font-black px-1 py-0.5 rounded text-[8px]">{huaType}</div>}
-                </div>
-                <div className="mt-2 flex flex-col gap-1 min-h-[30px]">
-                    {palace.stars.map(s => <span key={s} className="text-[12px] font-bold text-rose-300 chinese-font">{s}</span>)}
-                </div>
-                <div className="absolute bottom-1 right-2 text-[13px] font-black chinese-font text-slate-400">{palace.name}</div>
+    <div class="invoice-box">
+        <div class="header">
+            <div>
+                <h1>Invoice</h1>
             </div>
-        );
+            <div class="details">
+                <p><strong>Invoice #:</strong> INV-2026-001</p>
+                <p><strong>Date:</strong> January 20, 2026</p>
+                <p><strong>Due Date:</strong> February 03, 2026</p>
+            </div>
+        </div>
 
-        // --- Main App ---
-        const App = () => {
-            const [name, setName] = useState('命主');
-            const [gender, setGender] = useState('male');
-            const [date, setDate] = useState({ y: 1994, m: 10, d: 24 });
-            const [hour, setHour] = useState(0);
-            const [chart, setChart] = useState(null);
-            const [selected, setSelected] = useState(null);
-            const [aiInfo, setAiInfo] = useState('');
-            const [deepReport, setDeepReport] = useState('');
-            const [loading, setLoading] = useState(false);
-            const [showReport, setShowReport] = useState(false);
-            const [step, setStep] = useState(0);
-
-            useEffect(() => {
-                setChart(calculateChart(name, date.y, date.m, date.d, hour));
-            }, [name, date, hour]);
-
-            const lStr = useMemo(() => getLunarDate(date.y, date.m, date.d).fullLunarStr, [date]);
-
-            const handlePalace = async (p) => {
-                setSelected(p);
-                setLoading(true);
-                try {
-                    const ai = new GoogleGenAI({ apiKey: 'API_KEY_PLACEHOLDER' }); // process.env.API_KEY handled by environment
-                    const res = await ai.models.generateContent({
-                        model: 'gemini-3-flash-preview',
-                        contents: `请用简练白话文解析紫微斗数${p.name}宫，命主：${name}，生辰：${lStr}。重点阐述其飞星化象。100字以内。`
-                    });
-                    setAiInfo(res.text);
-                } catch { setAiInfo('解析暂不可用'); }
-                setLoading(false);
-            };
-
-            const handleDeepReport = async () => {
-                if (!selected) return;
-                setLoading(true);
-                setShowReport(true);
-                setDeepReport('');
-                setStep(0);
-                const timer = setInterval(() => setStep(s => s < 3 ? s + 1 : s), 2000);
-                try {
-                    const ai = new GoogleGenAI({ apiKey: 'API_KEY_PLACEHOLDER' });
-                    const res = await ai.models.generateContent({
-                        model: 'gemini-3-flash-preview',
-                        contents: `作为庄氏飞星紫微斗数宗师，请为命主${name}（${gender === 'male' ? '乾造' : '坤造'}，生辰${lStr}）撰写一份2500字的【极数白话命书】。
-                        结构包含：1.命格大局白话详解（500字）；2.性格与潜能深度剖析（400字）；3.事业财运与白话避坑指南（500字）；4.2025-2027三年运气逐年详述（800字）；5.生活、健康与人际锦囊（300字）。
-                        要求：全篇使用现代白话文，深入浅出讲解飞星化象（禄权科忌），确保总字数接近2500字。`
-                    });
-                    setDeepReport(res.text);
-                } catch { setDeepReport('天机暂时中断，请重试。'); }
-                clearInterval(timer);
-                setLoading(false);
-            };
-
-            const printReport = () => {
-                document.getElementById('print-mount').innerHTML = `
-                    <div class="print-header"><h1>【白话极数命书】2500字深度解析</h1><p>命主：${name} | 生辰：${lStr}</p></div>
-                    <div class="print-content">${deepReport.replace(/\n/g, '<br>')}</div>
-                    <div class="print-footer"><p>庄氏飞星紫微斗数系统生成</p></div>
-                `;
-                window.print();
-            };
-
-            const shareWa = () => {
-                const text = `📜 *白话极数命书* 📜\n\n命主：${name}\n生辰：${lStr}\n\n精华摘要：\n${deepReport.slice(0, 500)}...\n\n🔗 _[查看完整2500字解析及PDF]_`;
-                window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
-            };
-
-            const steps = ["神速演算命盘...", "排布飞星轨迹...", "撰写2500字白话命书...", "预测2025-2027年运势..."];
-
-            return (
-                <div className="min-h-screen p-4 lg:p-10 flex flex-col gap-6 max-w-[1400px] mx-auto no-print">
-                    <header className="glass-panel p-6 rounded-[2rem] flex flex-col md:flex-row justify-between items-center gap-4">
-                        <div>
-                            <h1 className="text-3xl font-black bg-gradient-to-r from-amber-200 to-indigo-300 bg-clip-text text-transparent chinese-font">庄氏飞星紫微斗数</h1>
-                            <p className="text-slate-500 text-[9px] font-bold tracking-widest uppercase">Plain Language Celestial Manuscript System</p>
-                        </div>
-                        <div className="flex gap-4 items-center">
-                            <div className="flex bg-slate-900 p-1 rounded-lg">
-                                <button onClick={() => setGender('male')} className={`px-4 py-1 text-[10px] font-bold rounded ${gender === 'male' ? 'bg-blue-600 text-white' : 'text-slate-500'}`}>乾造 (男)</button>
-                                <button onClick={() => setGender('female')} className={`px-4 py-1 text-[10px] font-bold rounded ${gender === 'female' ? 'bg-rose-600 text-white' : 'text-slate-500'}`}>坤造 (女)</button>
-                            </div>
-                            <div className="text-xs font-bold text-amber-200 bg-amber-900/20 px-3 py-1.5 rounded-lg border border-amber-800/30">农历：{lStr}</div>
-                        </div>
-                    </header>
-
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 glass-panel p-6 rounded-[1.5rem]">
-                        <input className="bg-slate-950/50 border border-white/10 rounded-lg p-2 text-sm outline-none focus:ring-1 focus:ring-amber-500" value={name} onChange={e => setName(e.target.value)} placeholder="姓名" />
-                        <input className="bg-slate-950/50 border border-white/10 rounded-lg p-2 text-sm outline-none" type="number" value={date.y} onChange={e => setDate({...date, y: parseInt(e.target.value)})} />
-                        <select className="bg-slate-950/50 border border-white/10 rounded-lg p-2 text-sm outline-none" value={date.m} onChange={e => setDate({...date, m: parseInt(e.target.value)})}>
-                            {Array.from({length:12}, (_,i)=>i+1).map(m=><option key={m} value={m}>{m}月</option>)}
-                        </select>
-                        <select className="bg-slate-950/50 border border-white/10 rounded-lg p-2 text-sm outline-none" value={hour} onChange={e => setHour(parseInt(e.target.value))}>
-                            {ZHIS.map((z,i)=><option key={z} value={i}>{z}时</option>)}
-                        </select>
-                    </div>
-
-                    <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
-                        <div className="xl:col-span-8 glass-panel p-2 rounded-[2.5rem] relative shadow-2xl">
-                            <div className="absolute inset-[26%] bg-slate-950/80 border border-white/5 rounded-[2rem] flex flex-col items-center justify-center text-center p-6 z-10 pulse-gold">
-                                {selected ? (
-                                    <>
-                                        <h3 className="text-3xl font-black text-amber-300 chinese-font mb-4">{selected.name}</h3>
-                                        <button onClick={handleDeepReport} className="bg-white text-black px-6 py-3 rounded-xl text-[11px] font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-transform">
-                                            极速生成2500字白话命书
-                                        </button>
-                                    </>
-                                ) : <div className="text-slate-500 text-[10px] font-bold tracking-widest animate-pulse uppercase">请选择宫位</div>}
-                            </div>
-                            <div className="ziwei-grid">
-                                {chart?.palaces.map((p, i) => (
-                                    <div key={i} style={{ gridRow: GRID_MAP[p.zhi_idx].r + 1, gridColumn: GRID_MAP[p.zhi_idx].c + 1 }}>
-                                        <PalaceCard palace={p} isSelected={selected?.zhi_idx === p.zhi_idx} onClick={() => handlePalace(p)} />
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                        <div className="xl:col-span-4 flex flex-col gap-6">
-                            <div className="glass-panel p-6 rounded-[2rem] min-h-[300px] flex flex-col gap-4">
-                                <h4 className="text-[10px] font-black text-indigo-400 uppercase tracking-widest">宗师实时解读</h4>
-                                <div className="text-sm text-slate-300 leading-relaxed italic chinese-font">
-                                    {loading && !showReport ? '快速推演中...' : aiInfo || '点击盘中宫位，获取飞星即时解读。'}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {showReport && (
-                        <div className="fixed inset-0 z-50 bg-slate-950/95 flex items-center justify-center p-4 backdrop-blur-xl">
-                            <div className="bg-slate-900 border border-white/10 w-full max-w-5xl max-h-[90vh] rounded-[2rem] overflow-hidden flex flex-col shadow-2xl">
-                                <div className="p-8 border-b border-white/5 flex justify-between items-center bg-slate-950/50">
-                                    <div>
-                                        <h2 className="text-2xl font-black chinese-font text-white">{translations.zh.deepReportTitle}</h2>
-                                        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{name} • {gender === 'male' ? '乾造' : '坤造'} • 2500字极速白话文版</p>
-                                    </div>
-                                    <button onClick={() => setShowReport(false)} className="text-slate-500 hover:text-white transition-colors">关闭</button>
-                                </div>
-                                <div className="flex-1 overflow-y-auto p-10 custom-scrollbar bg-slate-950/20">
-                                    {loading ? (
-                                        <div className="flex flex-col items-center justify-center py-20 gap-8">
-                                            <div className="w-16 h-16 border-4 border-amber-500/20 border-t-amber-500 rounded-full animate-spin"></div>
-                                            <p className="text-xl font-bold chinese-text text-amber-200 animate-pulse">{steps[step]}</p>
-                                        </div>
-                                    ) : <div className="whitespace-pre-wrap text-slate-200 leading-[2.5] text-lg max-w-3xl mx-auto pb-10 chinese-font">{deepReport}</div>}
-                                </div>
-                                <div className="p-8 bg-slate-950/80 border-t border-white/5 flex justify-center gap-4">
-                                    <button onClick={printReport} disabled={loading} className="bg-white text-black px-10 py-4 rounded-xl text-xs font-black uppercase transition-all hover:bg-slate-100 active:scale-95 shadow-lg">打印 PDF 命书</button>
-                                    <button onClick={shareWa} disabled={loading} className="bg-emerald-600 text-white px-10 py-4 rounded-xl text-xs font-black uppercase transition-all hover:bg-emerald-500 active:scale-95 shadow-lg">转发 WhatsApp</button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                    <footer className="text-center text-[10px] text-slate-600 font-bold tracking-[0.3em] uppercase mt-10">© 2024 Zhuang's System • 拨云见日 顺势而为</footer>
+        <div class="info-section">
+            <div class="info-block">
+                <h3>Bill To:</h3>
+                <p>[Client Name]</p>
+                <div class="address">
+                    [Client Address Line 1]<br>
+                    [Client Address Line 2]
                 </div>
-            );
-        };
+            </div>
+            <div class="info-block text-right">
+                <h3>From:</h3>
+                <p>CFC YOUTH ACADEMY SB</p>
+                <div class="address">
+                    [Your Address Line 1]<br>
+                    [Your Address Line 2]<br>
+                    Petaling Jaya, Selangor
+                </div>
+            </div>
+        </div>
 
-        const root = createRoot(document.getElementById('root'));
-        root.render(React.createElement(App));
-    </script>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 60%;">Description</th>
+                    <th class="text-right">Amount (MYR)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <strong>Project: Football Player Information Management System</strong><br>
+                        <span style="font-size: 12px; color: #666;">
+                            1. System Analysis & UI/UX Design<br>
+                            2. Core Development (Frontend & Backend)<br>
+                            3. Server Setup & Deployment<br>
+                            4. Testing, Training & Documentation<br>
+                            5. Annual Maintenance (Year 1)
+                        </span>
+                    </td>
+                    <td class="text-right">15,000.00</td>
+                </tr>
+                <tr class="total-row">
+                    <td class="text-right">TOTAL DUE:</td>
+                    <td class="text-right">MYR 15,000.00</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="bank-info">
+            <h4>Payment Details</h4>
+            <p style="margin: 0; line-height: 1.6;">
+                <strong>Bank Name:</strong> OCBC Bank<br>
+                <strong>Account Name:</strong> CFC YOUTH ACADEMY SB<br>
+                <strong>Account Number:</strong> [Insert Account Number]<br>
+                <strong>Reference:</strong> INV-2026-001
+            </p>
+        </div>
+
+        <div class="footer">
+            <p><strong>Terms & Conditions:</strong><br>
+            Please make payment within 14 days. Thank you for your business!</p>
+        </div>
+    </div>
+
 </body>
 </html>
