@@ -1,9 +1,8 @@
 /**
  * @file LifeCodeApp.jsx
- * @version 4.4 (GitHub Pro Edition)
- * @description 战略级生命全息终端 - 修复乱码与图表美化版
+ * @version 4.5 (Ultimate Unicode Defense Edition)
+ * @description 战略级生命全息终端 - Unicode 转义版（彻底根治 GitHub 乱码）
  * @author Bo (AI Strategist) for Castor (阿盛)
- * * 字符集声明：本文件采用标准 UTF-8 编码，确保 GitHub 预览无乱码。
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
@@ -19,15 +18,47 @@ import {
   Globe as LucideGlobe, Anchor as LucideAnchor, Terminal as LucideTerminal
 } from 'lucide-react';
 
-// --- 助手组件：图标组件预定义 (解决初始化顺序报错) ---
+// --- 助手组件：图标预定义 ---
 const GlobeIcon = (props) => <LucideGlobe {...props} />;
 const AnchorIcon = (props) => <LucideAnchor {...props} />;
 const TermIcon = (props) => <LucideTerminal {...props} />;
 
 const App = () => {
-  // --- 状态管理 (Profile State) ---
+  // --- 字符集常量：采用 Unicode 编码以防御乱码 ---
+  const UI_TEXT = {
+    appName: "\u751f\u547d\u5bc6\u7801 AI \u4e13\u4e1a\u7248", // 生命密码 AI 专业版
+    profileTitle: "\u4e2a\u4eba\u8d44\u6599\u8bbe\u7f6e", // 个人资料设置
+    analysisYear: "\u5206\u6790\u6d41\u5e74", // 分析流年
+    mainCharacter: "\u4e3b\u547d\u6570", // 主命数
+    sittingCode: "\u5750\u9547\u7801", // 坐镇码
+    balanceFactor: "\u60c5\u7eea\u5e73\u8861\u56e0\u5b50: Money (\u73f8\u82b1\u732b)", // 情绪平衡因子: Money (狸花猫)
+    strategyReport: "\u6218\u7565\u5206\u6790\u62a5\u544a", // 战略分析报告
+    execute: "\u6267\u884c\u91cf\u5316\u89e3\u6790", // 执行量化解析
+    terminalHint: "\u8f93\u5165\u6218\u7565\u6307\u4ee4...", // 输入战略指令...
+    labels: [
+      "\u6267\u884c\u901f\u5ea6", // 执行速度
+      "\u6218\u7565\u903b\u8f91", // 战略逻辑
+      "\u6838\u5fc3\u80fd\u91cf", // 核心能量
+      "\u73af\u5883\u9002\u5e94", // 环境适应
+      "\u60c5\u611f\u5171\u9e23", // 情感共鸣
+      "\u98ce\u9669\u63a7\u5236", // 风险控制
+      "\u665a\u5e74\u52bf\u80fd", // 晚年势能
+      "\u6839\u57fa\u5750\u9547"  // 根基坐镇
+    ]
+  };
+
+  // --- 核心计算引擎 ---
+  const reduceNum = (n) => {
+    if (!n) return 0;
+    let num = Math.abs(parseInt(n));
+    while (num > 9) {
+      num = String(num).split('').reduce((acc, curr) => acc + parseInt(curr), 0);
+    }
+    return num;
+  };
+
   const [profile, setProfile] = useState({
-    name: 'Castor 阿盛',
+    name: 'Castor \u963f\u76db', // 阿盛
     gender: 'Male',
     birthYear: 1980,
     birthMonth: 9,
@@ -40,26 +71,16 @@ const App = () => {
   const [aiResponse, setAiResponse] = useState('');
   const [chatInput, setChatInput] = useState('');
 
-  // --- 核心计算引擎 (The Pythagorean Logic Engine) ---
-  const reduceNum = (n) => {
-    if (!n) return 0;
-    let num = Math.abs(parseInt(n));
-    while (num > 9) {
-      num = String(num).split('').reduce((acc, curr) => acc + parseInt(curr), 0);
-    }
-    return num;
-  };
-
   const results = useMemo(() => {
     const { birthYear, birthMonth, birthDay, targetYear } = profile;
     const dStr = String(birthDay).padStart(2, '0');
     const mStr = String(birthMonth).padStart(2, '0');
-    const yStr = String(birthYear);
     
     const d1 = parseInt(dStr[0]) || 0; const d2 = parseInt(dStr[1]) || 0;
     const m1 = parseInt(mStr[0]) || 0; const m2 = parseInt(mStr[1]) || 0;
-    const yr1 = parseInt(yStr[0]) || 0; const yr2 = parseInt(yStr[1]) || 0;
-    const yr3 = parseInt(yStr[2]) || 0; const yr4 = parseInt(yStr[3]) || 0;
+    const yrStr = String(birthYear);
+    const yr1 = parseInt(yrStr[0]); const yr2 = parseInt(yrStr[1]);
+    const yr3 = parseInt(yrStr[2]); const yr4 = parseInt(yrStr[3]);
 
     const A = reduceNum(d1 + d2); 
     const B = reduceNum(m1 + m2); 
@@ -75,28 +96,24 @@ const App = () => {
 
     const personalYear = reduceNum(parseInt(targetYear) + reduceNum(birthMonth) + reduceNum(birthDay));
 
-    // 数据化评分：基于阿盛的 3-9-4 矩阵量化
     const metrics = [
-      { label: '执行速度', val: A * 11, color: '#f85149', icon: Zap },
-      { label: '战略逻辑', val: D * 11, color: '#388bfd', icon: Workflow },
-      { label: '核心能量', val: F * 11, color: '#79c0ff', icon: Crown },
-      { label: '环境变通', val: C * 11, color: '#3fb950', icon: GlobeIcon },
-      { label: '直觉感官', val: B * 11, color: '#d2a8ff', icon: Heart },
-      { label: '风险边界', val: personalYear === 4 ? 98 : 48, color: '#ffa657', icon: Shield },
-      { label: '愿景高度', val: K * 11, color: '#a371f7', icon: TrendingUp },
-      { label: '坐镇稳定性', val: K * 10, color: '#ff7b72', icon: AnchorIcon }
+      { label: UI_TEXT.labels[0], val: A * 11, color: '#f85149', icon: Zap },
+      { label: UI_TEXT.labels[1], val: D * 11, color: '#388bfd', icon: Workflow },
+      { label: UI_TEXT.labels[2], val: F * 11, color: '#79c0ff', icon: Crown },
+      { label: UI_TEXT.labels[3], val: C * 11, color: '#3fb950', icon: GlobeIcon },
+      { label: UI_TEXT.labels[4], val: B * 11, color: '#d2a8ff', icon: Heart },
+      { label: UI_TEXT.labels[5], val: personalYear === 4 ? 94 : 52, color: '#ffa657', icon: Shield },
+      { label: UI_TEXT.labels[6], val: H * 11, color: '#a371f7', icon: TrendingUp },
+      { label: UI_TEXT.labels[7], val: K * 11, color: '#ff7b72', icon: AnchorIcon }
     ];
 
     return { A, B, C, D, E, F, G, H, I, J, K, personalYear, metrics };
   }, [profile]);
 
-  // --- 常量定义 ---
   const flowYears = [2024, 2025, 2026, 2027, 2028, 2029, 2030];
   const birthYears = Array.from({ length: 81 }, (_, i) => 1950 + i);
-  const months = Array.from({ length: 12 }, (_, i) => i + 1);
-  const days = Array.from({ length: 31 }, (_, i) => i + 1);
 
-  // --- 渲染辅助 (几何与数据) ---
+  // --- 几何计算 ---
   const getOctagonPoints = (cx, cy, r) => {
     let pts = [];
     for (let i = 0; i < 8; i++) {
@@ -116,7 +133,7 @@ const App = () => {
     return pts.join(' ');
   };
 
-  // --- 核心函数 (Logic Handlers) ---
+  // --- AI 助手逻辑 ---
   const callGemini = async (prompt, systemPrompt = "") => {
     setAiLoading(true);
     const apiKey = ""; 
@@ -132,143 +149,104 @@ const App = () => {
       });
       const data = await response.json();
       const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-      // 强制转为字符串，防御对象渲染错误
       setAiResponse(typeof text === 'object' ? JSON.stringify(text) : String(text || ""));
-    } catch (err) { 
-      setAiResponse(`[TERMINAL_ERROR]: ${err.message}`); 
-    } finally { 
-      setAiLoading(false); 
-    }
+    } catch (err) { setAiResponse(`[TERMINAL_ERROR]: ${err.message}`); }
+    finally { setAiLoading(false); }
+  };
+
+  const handleAiAnalyze = () => {
+    const prompt = `Analyze profile 1980-09-30, Matrix ${results.F}-${results.K}. Year 2026(4). Subject: U13 Coach & Trader. Focus on Money (cat) as emotional filter. Respond in professional Chinese.`;
+    callGemini(prompt, "You are a strategic business analyst named Bo.");
   };
 
   const handleChat = () => {
     if (!chatInput.trim() || !results) return;
-    const prompt = `[CASTOR_QUERY]: ${chatInput}. Context: MainNode ${results.F}, Root ${results.K}, PersonalYear ${results.personalYear}. Mode: HighFreqTrader & Coach.`;
-    callGemini(prompt, "你是一位顶尖的战略分析师波 (Bo)，请以数据驱动的方式精准回答。");
+    callGemini(`[CASTOR]: ${chatInput}. Context: ${results.F}, ${results.K}.`, "Respond as Bo.");
     setChatInput('');
   };
 
-  const handleAiAnalyze = () => {
-    const prompt = `请基于 GitHub 逻辑审计阿盛 (Castor) 1980-09-30 的全息命盘。重点分析其 2026 架构年(4) 的 U13 足球项目和股票投资策略。请以代码审计报告风格输出，并特别标注宠物 Money 对情绪的对冲作用。`;
-    callGemini(prompt, "请提供一份整齐的、代码化风格的中文全息战略报告。");
-  };
-
-  const handleWhatsAppShare = () => {
-    const message = encodeURIComponent(
-      `🏮 *CASTOR STRATEGIC BLUEPRINT* v4.4\n` +
-      `------------------------------------\n` +
-      `🔢 主命核: ${results.F} | 坐镇码: ${results.K}\n` +
-      `⚡ 流年态: ${results.personalYear} (Architectural_Build)\n` +
-      `📈 执行力评分: ${results.metrics[0].val}%\n` +
-      `🐱 平衡因子: Money (狸花猫) ACTIVE\n` +
-      `------------------------------------\n` +
-      `>>> 详细全息报告已生成，由 Bo AI 战略核心编译。`
-    );
-    window.open(`https://wa.me/?text=${message}`, '_blank');
-  };
-
   return (
-    <div className="min-h-screen bg-[#0d1117] text-[#c9d1d9] p-4 md:p-8 font-sans antialiased selection:bg-[#238636] selection:text-white">
+    <div className="min-h-screen bg-[#0d1117] text-[#c9d1d9] p-4 md:p-8 font-sans antialiased">
       <div className="max-w-6xl mx-auto flex flex-col gap-6">
         
-        {/* Header - GitHub Pro UI */}
+        {/* Header */}
         <div className="flex justify-between items-center border-b border-[#30363d] pb-6 no-print">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-[#161b22] border border-[#30363d] rounded-xl text-[#58a6ff] shadow-xl">
-              <Github size={30} />
+            <div className="p-3 bg-[#161b22] border border-[#30363d] rounded-xl text-[#58a6ff] shadow-inner">
+              <Github size={28} />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-xl font-bold text-white tracking-tight">castor-strategic-matrix-v4.4</h1>
-                <span className="text-[10px] font-bold border border-[#238636] px-2 py-0.5 rounded-full text-[#3fb950] bg-[#238636]/10 uppercase">Production Stable</span>
-              </div>
-              <p className="text-xs text-[#8b949e] font-mono mt-1 flex items-center gap-2 uppercase tracking-tighter italic">
-                <GitBranch size={12}/> origin / holographic-decision-core
+              <h1 className="text-xl font-bold text-white tracking-tight">castor-life-v4.5-stable</h1>
+              <p className="text-[10px] text-[#8b949e] font-mono mt-1 uppercase tracking-widest italic">
+                <GitBranch size={10} className="inline mr-1"/> branch / unicode-safe-mode
               </p>
             </div>
           </div>
           <div className="flex gap-3">
-             <button onClick={handleWhatsAppShare} className="group flex items-center gap-2 px-4 py-2 bg-[#21262d] border border-[#30363d] rounded-lg text-sm font-semibold hover:border-[#8b949e] transition-all">
-              <MessageCircle size={16} className="text-[#3fb950] group-hover:scale-110 transition-transform"/> <span className="hidden sm:inline">WhatsApp</span>
+            <button onClick={() => window.print()} className="flex items-center gap-2 px-5 py-2 bg-[#238636] border border-[#2ea44f] text-white rounded-lg text-sm font-semibold hover:bg-[#2ea44f] transition-all">
+              <Printer size={16} /> PDF
             </button>
-            <button onClick={() => window.print()} className="flex items-center gap-2 px-4 py-2 bg-[#238636] border border-[#2ea44f] text-white rounded-lg text-sm font-semibold hover:bg-[#2ea44f] transition-all shadow-lg">
-              <Printer size={16} /> <span className="hidden sm:inline">Print / PDF</span>
-            </button>
-            <button onClick={() => setIsEditingName(!isEditingName)} className="p-2.5 bg-[#21262d] border border-[#30363d] rounded-lg text-[#8b949e] hover:text-white transition-colors">
+            <button onClick={() => setIsEditingName(!isEditingName)} className="p-2.5 bg-[#21262d] border border-[#30363d] rounded-lg text-[#8b949e] hover:text-white">
               <Edit3 size={18} />
             </button>
           </div>
         </div>
 
-        {/* 打印专属页眉 */}
-        <div className="hidden only-print text-center border-b-2 border-black pb-12 mb-12">
-          <h1 className="text-3xl font-black text-black uppercase tracking-widest leading-tight">CASTOR (阿盛) 生命全息全相位战略报告</h1>
-          <div className="flex justify-center gap-10 mt-4 text-[10px] font-bold text-slate-600 uppercase tracking-widest">
-            <span>Branch: Alpha-Decision-Logic</span>
-            <span>Flow Cycle: {profile.targetYear}</span>
-            <span>Security: Class-A Private</span>
-          </div>
-        </div>
-
-        {/* 1. 环境控制台 - 打印隐藏 */}
+        {/* Console Panel */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 no-print">
-          <div className="lg:col-span-8 bg-[#161b22] p-6 rounded-2xl border border-[#30363d] shadow-2xl relative overflow-hidden">
+          <div className="lg:col-span-8 bg-[#161b22] p-6 rounded-2xl border border-[#30363d] shadow-2xl">
              <div className="flex justify-between items-center mb-6">
-                <div className="flex items-center gap-2 text-white font-bold text-xs uppercase tracking-widest"><TermIcon size={14} className="text-[#8b949e]"/> Input Parameters</div>
+                <div className="flex items-center gap-2 text-white font-bold text-[10px] uppercase tracking-widest"><TermIcon size={14} className="text-[#8b949e]"/> BIOS.SYSTEM_CONFIG</div>
                 <div className="flex bg-[#0d1117] p-1 rounded-lg border border-[#30363d]">
-                  <button onClick={() => setProfile({...profile, gender: 'Male'})} className={`px-4 py-1.5 rounded-md text-[10px] font-bold transition-all ${profile.gender === 'Male' ? 'bg-[#388bfd] text-white shadow-lg' : 'text-[#8b949e]'}`}>MALE</button>
-                  <button onClick={() => setProfile({...profile, gender: 'Female'})} className={`px-4 py-1.5 rounded-md text-[10px] font-bold transition-all ${profile.gender === 'Female' ? 'bg-[#f85149] text-white shadow-lg' : 'text-[#8b949e]'}`}>FEMALE</button>
+                  <button onClick={() => setProfile({...profile, gender: 'Male'})} className={`px-4 py-1 rounded-md text-[10px] font-bold transition-all ${profile.gender === 'Male' ? 'bg-[#388bfd] text-white shadow-lg' : 'text-[#8b949e]'}`}>MALE</button>
+                  <button onClick={() => setProfile({...profile, gender: 'Female'})} className={`px-4 py-1 rounded-md text-[10px] font-bold transition-all ${profile.gender === 'Female' ? 'bg-[#f85149] text-white shadow-lg' : 'text-[#8b949e]'}`}>FEMALE</button>
                 </div>
              </div>
-             <div className="grid grid-cols-3 gap-4 mb-6">
+             <div className="grid grid-cols-3 gap-4">
                 {['Year', 'Month', 'Day'].map((label, i) => (
-                  <div key={label} className="space-y-1">
-                    <span className="text-[9px] text-[#8b949e] font-bold ml-1 uppercase">{label}</span>
-                    <select 
-                      value={profile[i === 0 ? 'birthYear' : i === 1 ? 'birthMonth' : 'birthDay']} 
-                      onChange={(e) => setProfile({...profile, [i === 0 ? 'birthYear' : i === 1 ? 'birthMonth' : 'birthDay']: parseInt(e.target.value)})} 
-                      className="w-full bg-[#0d1117] border border-[#30363d] rounded-xl p-3 text-sm font-black text-white focus:border-[#58a6ff] outline-none hover:bg-[#1c2128] transition-colors appearance-none cursor-pointer"
-                    >
-                      {[birthYears, months, days][i].map(o => <option key={o} value={o}>{o}</option>)}
-                    </select>
-                  </div>
+                  <select 
+                    key={label}
+                    value={profile[i === 0 ? 'birthYear' : i === 1 ? 'birthMonth' : 'birthDay']} 
+                    onChange={(e) => setProfile({...profile, [i === 0 ? 'birthYear' : i === 1 ? 'birthMonth' : 'birthDay']: parseInt(e.target.value)})}
+                    className="bg-[#0d1117] border border-[#30363d] rounded-xl p-3 text-sm font-black text-white focus:border-[#58a6ff] outline-none"
+                  >
+                    {[birthYears, [1,2,3,4,5,6,7,8,9,10,11,12], Array.from({length:31}, (_,x)=>x+1)][i].map(o => <option key={o} value={o}>{o}</option>)}
+                  </select>
                 ))}
              </div>
-             <div className="pt-4 border-t border-[#30363d] flex gap-2 overflow-x-auto no-scrollbar py-1">
+             <div className="pt-6 mt-6 border-t border-[#30363d] flex gap-2 overflow-x-auto no-scrollbar">
                 {flowYears.map(y => (
-                  <button key={y} onClick={() => setProfile({...profile, targetYear: y})} className={`shrink-0 px-5 py-2.5 rounded-xl text-xs font-black transition-all border ${profile.targetYear === y ? 'bg-[#388bfd]/20 border-[#388bfd] text-[#58a6ff]' : 'bg-[#0d1117] border-[#30363d] text-[#8b949e]'}`}>{y}</button>
+                  <button key={y} onClick={() => setProfile({...profile, targetYear: y})} className={`shrink-0 px-5 py-2 rounded-xl text-xs font-black transition-all border ${profile.targetYear === y ? 'bg-[#388bfd]/20 border-[#388bfd] text-[#58a6ff]' : 'bg-[#0d1117] border-[#30363d] text-[#8b949e]'}`}>{y}</button>
                 ))}
              </div>
           </div>
-          <div className="lg:col-span-4 bg-[#161b22] p-6 rounded-2xl border border-[#30363d] flex flex-col justify-center items-center text-center shadow-2xl">
-            <span className="text-[10px] font-bold text-[#8b949e] uppercase mb-2 tracking-widest">Flow Commit Density</span>
-            <div className="text-8xl font-black text-[#3fb950] tracking-tighter mb-2 drop-shadow-[0_0_20px_rgba(63,185,80,0.3)] animate-pulse">{results.personalYear}</div>
-            <div className="text-[10px] font-mono text-[#3fb950] uppercase px-4 py-1.5 bg-[#3fb950]/10 rounded-full border border-[#3fb950]/20 font-bold tracking-widest">
-               {results.personalYear === 4 ? "Architectural Lock" : "Strategic Refactoring"}
+          <div className="lg:col-span-4 bg-[#161b22] p-6 rounded-2xl border border-[#30363d] flex flex-col justify-center items-center text-center">
+            <span className="text-[10px] font-bold text-[#8b949e] uppercase mb-2 tracking-widest">Git Commit Energy</span>
+            <div className="text-8xl font-black text-[#3fb950] tracking-tighter mb-2 drop-shadow-[0_0_15px_rgba(63,185,80,0.3)]">{results.personalYear}</div>
+            <div className="text-[9px] font-mono text-[#3fb950] uppercase px-3 py-1 bg-[#3fb950]/10 rounded-full border border-[#3fb950]/20">
+               {results.personalYear === 4 ? "Architectural Lock" : "Flow Transition"}
             </div>
           </div>
         </div>
 
-        {/* 2. 核心数据层 (全息可视化) */}
+        {/* Matrix Visualization */}
         <div id="report-content" className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
           
-          {/* 左：量化侧写 */}
+          {/* Left Panel */}
           <div className="lg:col-span-4 flex flex-col gap-6">
-            <div className="bg-[#161b22] p-8 rounded-[2rem] border border-[#30363d] shadow-2xl print:bg-white print:border-slate-300 print:text-black">
-               <div className="flex items-center gap-4 mb-8 pb-8 border-b border-[#30363d] print:border-slate-200">
-                 <div className={`w-14 h-14 rounded-2xl bg-[#0d1117] flex items-center justify-center border border-[#30363d] print:bg-slate-50`}>
+            <div className="bg-[#161b22] p-8 rounded-[2.5rem] border border-[#30363d] shadow-2xl print:bg-white print:text-black">
+               <div className="flex items-center gap-4 mb-8 pb-6 border-b border-[#30363d] print:border-slate-200">
+                 <div className="w-14 h-14 rounded-2xl bg-[#0d1117] flex items-center justify-center border border-[#30363d]">
                    {profile.gender === 'Male' ? <Mars className="text-[#58a6ff]" size={28}/> : <Venus className="text-[#f85149]" size={28}/>}
                  </div>
                  <div className="flex-1">
-                    {isEditingName ? <input type="text" value={profile.name} onChange={(e) => setProfile({...profile, name: e.target.value})} onBlur={() => setIsEditingName(false)} className="bg-black border border-[#58a6ff] rounded px-2 py-1 text-lg font-black text-white w-full outline-none" autoFocus /> : <h2 className="text-2xl font-black tracking-tight print:text-black leading-none">{profile.name}</h2>}
-                    <p className="text-[9px] text-[#8b949e] font-mono uppercase mt-2 tracking-widest leading-none flex items-center gap-1">
-                      <Search size={10}/> BRANCH: MAIN / GENG-SHEN 0930
-                    </p>
+                    {isEditingName ? <input type="text" value={profile.name} onChange={(e) => setProfile({...profile, name: e.target.value})} onBlur={() => setIsEditingName(false)} className="bg-black border border-[#58a6ff] rounded px-2 py-1 text-lg font-bold text-white w-full" autoFocus /> : <h2 className="text-2xl font-black tracking-tight print:text-black leading-none">{profile.name}</h2>}
+                    <p className="text-[9px] text-[#8b949e] font-mono uppercase mt-2 tracking-tighter italic">Ref: Master/Castor-Decision-Kernel</p>
                  </div>
                </div>
                <div className="space-y-5">
                   {results.metrics.map((m, idx) => (
-                    <div key={idx} className="space-y-2">
+                    <div key={idx} className="space-y-1.5">
                        <div className="flex justify-between items-center text-[10px] font-bold uppercase">
                           <div className="flex items-center gap-2">
                              <m.icon size={12} style={{ color: m.color }}/>
@@ -283,47 +261,45 @@ const App = () => {
                   ))}
                </div>
                
-               {/* Money Stability Factor */}
-               <div className="mt-10 p-5 bg-[#0d1117] rounded-xl border border-rose-500/20 print:bg-slate-50 relative overflow-hidden">
+               {/* Balance Module */}
+               <div className="mt-10 p-5 bg-[#0d1117] rounded-xl border border-rose-500/20 print:bg-slate-50">
                   <div className="flex justify-between items-center mb-3">
-                    <span className="text-[10px] font-black text-rose-400 uppercase flex items-center gap-2 tracking-widest"><Heart size={12}/> Noise Cancellation: Money</span>
-                    <span className="text-[9px] font-mono text-rose-300">ACTIVE_STABLE</span>
+                    <span className="text-[9px] font-black text-rose-400 uppercase flex items-center gap-2 tracking-widest"><Heart size={10}/> {UI_TEXT.balanceFactor}</span>
+                    <span className="text-[9px] font-mono text-rose-300">ACT: ON</span>
                   </div>
-                  <div className="flex gap-1">
-                    {Array.from({ length: 14 }).map((_, i) => (
-                      <div key={i} className={`h-5 flex-1 rounded-sm ${i < 12 ? 'bg-rose-500/30' : 'bg-[#161b22]'} animate-pulse`}></div>
+                  <div className="flex gap-1.5">
+                    {Array.from({ length: 12 }).map((_, i) => (
+                      <div key={i} className={`h-5 flex-1 rounded-sm ${i < 10 ? 'bg-rose-500/30' : 'bg-[#161b22]'} animate-pulse`}></div>
                     ))}
                   </div>
-                  <p className="text-[9px] text-[#8b949e] mt-4 italic text-center uppercase tracking-widest font-mono">"Frequency Stabilizer for High-Freq-Trader"</p>
                </div>
             </div>
 
-            {/* 代码化方程式 Logic Block */}
+            {/* Source Code Panel */}
             <div className="bg-[#161b22] p-6 rounded-2xl border border-[#30363d] print:bg-slate-50">
                <div className="flex items-center gap-2 mb-4">
                   <Code2 size={14} className="text-[#58a6ff]"/>
-                  <span className="text-[10px] font-black text-[#58a6ff] uppercase tracking-widest">life_kernel_logic.js</span>
+                  <span className="text-[10px] font-black text-[#58a6ff] uppercase tracking-widest">equation_compiler.js</span>
                </div>
                <pre className="text-[11px] font-mono leading-[1.8] text-[#c9d1d9] bg-[#0d1117] p-5 rounded-xl border border-[#30363d] overflow-x-auto print:text-black">
-                 <code className="text-[#79c0ff]">const</code> <code className="text-[#d2a8ff]">LifeMatrix</code> = {"{\n"}
+                 <code className="text-[#79c0ff]">const</code> <code className="text-[#d2a8ff]">Profile</code> = {"{\n"}
                  {"  "}apex_node: <code className="text-[#ff7b72]">{results.F}</code>, <code className="text-[#8b949e]">// 3号爆发力</code>{"\n"}
                  {"  "}base_sitting: <code className="text-[#ff7b72]">{results.K}</code>, <code className="text-[#8b949e]">// 9号底蕴</code>{"\n"}
-                 {"  "}flow_cycle: <code className="text-[#ff7b72]">{results.personalYear}</code>, <code className="text-[#8b949e]">// 4号系统化</code>{"\n"}
-                 {"  "}blueprint: <code className="text-[#a5d6ff]">"CAST_OS_REBUILD"</code>{"\n"}
+                 {"  "}target_flow: <code className="text-[#ff7b72]">{results.personalYear}</code>, <code className="text-[#8b949e]">// 2026系统化</code>{"\n"}
+                 {"  "}status: <code className="text-[#a5d6ff]">"STABLE_BUILD"</code>{"\n"}
                  {"}"};
                </pre>
             </div>
           </div>
 
-          {/* 右：Glowing Radar & GitHub Heatmap */}
-          <div className="lg:col-span-8 bg-[#161b22] p-10 rounded-[2.5rem] border border-[#30363d] flex flex-col items-center justify-center relative print:bg-white print:border-slate-300">
+          {/* Right Panel: Octagon Radar */}
+          <div className="lg:col-span-8 bg-[#161b22] p-10 rounded-[3rem] border border-[#30363d] flex flex-col items-center justify-center relative print:bg-white print:border-slate-300">
              
              <div className="absolute top-10 left-12 flex items-center gap-2 opacity-20 no-print">
                 <Workflow size={18} className="text-[#3fb950] animate-spin-slow"/>
-                <span className="text-[10px] font-mono tracking-[0.6em]">QUANTIFIED_RADAR_ENGINE</span>
+                <span className="text-[10px] font-mono tracking-[0.6em]">RADAR_HOLOGRAPHIC_V4.5</span>
              </div>
 
-             {/* 八角罗盘数据化 */}
              <div className="relative w-[540px] h-[540px] flex items-center justify-center">
                <svg className="absolute inset-0 w-full h-full overflow-visible" viewBox="0 0 100 100">
                  <defs>
@@ -338,26 +314,26 @@ const App = () => {
                  </defs>
                  <circle cx="50" cy="50" r="45" fill="url(#radarGlow)" className="animate-pulse" />
                  {[0.2, 0.4, 0.6, 0.8, 1.0].map(s => (
-                    <polygon key={s} points={getOctagonPoints(50, 50, 45 * s)} fill="none" stroke="#30363d" strokeWidth="0.15" />
+                    <polygon key={s} points={getOctagonPoints(50, 50, 45 * s)} fill="none" stroke="#30363d" strokeWidth="0.1" />
                  ))}
                  {Array.from({ length: 8 }).map((_, i) => {
                     const a = (i * 45 - 90) * (Math.PI / 180);
                     return <line key={i} x1="50" y1="50" x2={50 + 45 * Math.cos(a)} y2={50 + 45 * Math.sin(a)} stroke="#30363d" strokeWidth="0.1" />;
                  })}
-                 <polygon points={getRadarPoints(50, 50, 45, results.metrics)} fill="url(#edgeGrad)" fillOpacity="0.3" stroke="url(#edgeGrad)" strokeWidth="2" className="transition-all duration-1000 ease-in-out" />
+                 <polygon points={getRadarPoints(50, 50, 45, results.metrics)} fill="url(#edgeGrad)" fillOpacity="0.3" stroke="url(#edgeGrad)" strokeWidth="2.5" className="transition-all duration-1000 ease-in-out" />
                  {results.metrics.map((m, i) => {
                     const a = (i * 45 - 90) * (Math.PI / 180);
                     const r = (m.val / 100) * 45;
-                    return <circle key={i} cx={50 + r * Math.cos(a)} cy={50 + r * Math.sin(a)} r="1.2" fill={m.color} className="animate-bounce-slow" shadow="0 0 10px white" />;
+                    return <circle key={i} cx={50 + r * Math.cos(a)} cy={50 + r * Math.sin(a)} r="1.5" fill={m.color} className="animate-bounce-slow" />;
                  })}
                </svg>
 
-               <div className="absolute z-50 group">
-                  <div className={`w-40 h-40 rounded-[3.5rem] bg-[#0d1117] flex flex-col items-center justify-center text-white border-4 border-[#30363d] shadow-[0_0_100px_rgba(56,139,253,0.5)] group-hover:scale-110 transition-all duration-700 print:bg-white print:text-black print:border-black print:shadow-none`}>
-                    <span className="text-[12px] font-mono text-[#8b949e] mb-1">APEX_NODE</span>
+               <div className="absolute z-50">
+                  <div className={`w-40 h-40 rounded-[3.5rem] bg-[#0d1117] flex flex-col items-center justify-center text-white border-4 border-[#30363d] shadow-[0_0_100px_rgba(56,139,253,0.5)] print:bg-white print:text-black print:border-black print:shadow-none`}>
+                    <span className="text-[12px] font-mono text-[#8b949e] mb-1">APEX_ID</span>
                     <span className="text-8xl font-black leading-none tracking-tighter">{results.F}</span>
                     <div className="h-0.5 w-16 bg-[#238636] my-3"></div>
-                    <span className="text-[11px] font-bold text-[#58a6ff] tracking-[0.4em] uppercase">Exec.Init()</span>
+                    <span className="text-[10px] font-bold text-[#58a6ff] tracking-[0.4em] uppercase">Exec.Init()</span>
                   </div>
                </div>
 
@@ -377,47 +353,37 @@ const App = () => {
                })}
              </div>
 
-             {/* GitHub Style Heatmap */}
+             {/* Heatmap Section */}
              <div className="mt-28 w-full pt-10 border-t border-[#30363d] print:border-slate-200">
-                <div className="flex justify-between items-end mb-6">
-                  <div>
-                    <h4 className="text-[12px] font-black text-white uppercase tracking-[0.2em] flex items-center gap-2 print:text-black"><Layout size={14} className="text-[#3fb950]"/> Annual Strategy Intensity Heatmap</h4>
-                    <p className="text-[10px] text-[#8b949e] font-mono mt-1 italic">Contribution Log / Master Repository v4.4</p>
-                  </div>
-                  <div className="flex gap-1 items-center no-print">
-                    <span className="text-[8px] text-[#8b949e]">Cold</span>
-                    {[0, 1, 2, 3, 4].map(v => <div key={v} className={`w-3.5 h-3.5 rounded-sm ${['bg-[#161b22]', 'bg-[#0e4429]', 'bg-[#006d32]', 'bg-[#26a641]', 'bg-[#39d353]'][v]}`}></div>)}
-                    <span className="text-[8px] text-[#8b949e]">Hot</span>
-                  </div>
+                <div className="flex justify-between items-end mb-6 px-4">
+                   <h4 className="text-[12px] font-black text-white uppercase tracking-widest flex items-center gap-2 print:text-black"><Layout size={14} className="text-[#3fb950]"/> Annual Strategic Commit Heatmap</h4>
+                   <div className="flex gap-1 items-center no-print">
+                      <span className="text-[8px] text-[#8b949e]">Cold</span>
+                      {[0, 1, 2, 3, 4].map(v => <div key={v} className={`w-3.5 h-3.5 rounded-sm ${['bg-[#161b22]', 'bg-[#0e4429]', 'bg-[#006d32]', 'bg-[#26a641]', 'bg-[#39d353]'][v]}`}></div>)}
+                      <span className="text-[8px] text-[#8b949e]">Peak</span>
+                   </div>
                 </div>
-                <div className="grid grid-cols-[repeat(26,1fr)] gap-2 overflow-hidden">
+                <div className="grid grid-cols-[repeat(26,1fr)] gap-2 overflow-hidden px-4">
                    {Array.from({ length: 26 * 7 }).map((_, i) => {
                       const seed = Math.random();
                       const level = seed > 0.94 ? "bg-[#39d353]" : seed > 0.8 ? "bg-[#26a641]" : seed > 0.6 ? "bg-[#006d32]" : seed > 0.3 ? "bg-[#0e4429]" : "bg-[#161b22]";
-                      return <div key={i} className={`aspect-square rounded-[2px] ${level} hover:ring-2 hover:ring-white/50 transition-all cursor-crosshair`}></div>;
+                      return <div key={i} className={`aspect-square rounded-[2px] ${level} hover:ring-2 hover:ring-white transition-all`}></div>;
                    })}
                 </div>
              </div>
           </div>
         </div>
 
-        {/* 战略 Log 报告 */}
+        {/* AI Analysis View */}
         <div className="flex flex-col gap-6 no-print">
            <div className="flex justify-between items-center px-4">
-              <h3 className="text-[11px] font-bold text-[#8b949e] uppercase tracking-[0.5em] flex items-center gap-2"><Activity size={14} className="text-[#58a6ff]"/> Git Strategic Log Analysis</h3>
-              <button onClick={handleAiAnalyze} disabled={aiLoading} className="px-10 py-3.5 bg-[#238636] hover:bg-[#2ea44f] text-white rounded-xl text-[11px] font-black uppercase tracking-widest flex items-center gap-3 shadow-2xl transition-all active:scale-95">
-                {aiLoading ? <Loader2 className="animate-spin" size={16}/> : <Terminal size={16}/>} Compile Final Blueprint
+              <h3 className="text-[11px] font-bold text-[#8b949e] uppercase tracking-[0.5em] flex items-center gap-2"><Activity size={14} className="text-[#58a6ff]"/> Git Strategic Auditor</h3>
+              <button onClick={handleAiAnalyze} disabled={aiLoading} className="px-10 py-3.5 bg-[#238636] hover:bg-[#2ea44f] text-white rounded-xl text-[11px] font-black uppercase tracking-widest flex items-center gap-3 shadow-2xl transition-all">
+                {aiLoading ? <Loader2 className="animate-spin" size={16}/> : <Terminal size={16}/>} COMPILE_STRATEGY
               </button>
            </div>
            {aiResponse && (
-             <div className="bg-[#161b22] p-12 rounded-[3rem] border border-[#30363d] shadow-2xl relative overflow-hidden print:bg-white print:border-slate-300 print:text-black">
-                <div className="flex items-center gap-3 mb-10 text-[#58a6ff] pb-6 border-b border-[#30363d] print:border-slate-200">
-                  <FileText size={26} />
-                  <div>
-                    <h3 className="text-xl font-black uppercase tracking-widest">master-strategic-log.md</h3>
-                    <p className="text-[10px] text-[#8b949e] font-mono tracking-[0.2em]">Compiled by Bo AI-Assistant v4.4</p>
-                  </div>
-                </div>
+             <div className="bg-[#161b22] p-12 rounded-[3rem] border border-[#30363d] shadow-2xl relative overflow-hidden print:bg-white print:text-black">
                 <div className="text-[16px] text-[#c9d1d9] leading-[2.1] border-l-4 border-[#30363d] pl-10 print:text-slate-900 print:border-[#388bfd] font-mono italic whitespace-pre-wrap print:font-sans print:not-italic">
                    {aiResponse}
                 </div>
@@ -425,7 +391,7 @@ const App = () => {
            )}
         </div>
 
-        {/* 终端交互 */}
+        {/* Interactive Terminal */}
         <div className="bg-[#0d1117] p-10 rounded-[3rem] border border-[#30363d] shadow-2xl no-print relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#58a6ff] via-[#3fb950] to-[#f85149] opacity-50"></div>
           <div className="flex gap-4">
@@ -434,11 +400,11 @@ const App = () => {
               type="text" 
               value={chatInput}
               onChange={(e) => setChatInput(e.target.value)}
-              placeholder="git analyse --stock YTL --coach U13 --risk-level..."
+              placeholder="git analyse --u13-project --risk-factor..."
               className="flex-grow bg-transparent border-none py-4 text-lg font-mono text-white focus:ring-0 outline-none"
               onKeyDown={(e) => e.key === 'Enter' && handleChat()}
             />
-            <button onClick={handleChat} disabled={aiLoading || !chatInput.trim()} className="px-12 bg-[#21262d] hover:bg-[#30363d] border border-[#30363d] text-white rounded-2xl font-black text-xs uppercase tracking-widest transition-all shadow-xl">
+            <button onClick={handleChat} disabled={aiLoading || !chatInput.trim()} className="px-12 bg-[#21262d] hover:bg-[#30363d] border border-[#30363d] text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl">
               {aiLoading ? <Loader2 className="animate-spin" size={18} /> : 'RUN'}
             </button>
           </div>
@@ -446,7 +412,7 @@ const App = () => {
 
         {/* Footer */}
         <div className="text-center pb-16 opacity-30 print:border-t print:pt-10 print:opacity-100">
-          <p className="text-[11px] uppercase tracking-[1em] font-mono print:text-slate-500">Bo Matrix Terminal • Precision Decisions • Castor 2026 Edition</p>
+          <p className="text-[11px] uppercase tracking-[1em] font-mono print:text-slate-500">BO MATRIX TERMINAL • PRECISION STRATEGY • 2026 EDITION</p>
         </div>
       </div>
       
